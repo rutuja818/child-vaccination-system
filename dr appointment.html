@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Appointment Booking</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold mb-4 text-center">Doctor Appointment Booking</h1>
+    <table class="min-w-full table-auto border border-gray-300">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="px-4 py-2 text-left">Doctor Name</th>
+          <th class="px-4 py-2 text-left">Availability</th>
+          <th class="px-4 py-2 text-left">Action</th>
+        </tr>
+      </thead>
+      <tbody id="doctor-table">
+        <!-- Rows will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const doctors = [
+      { name: "Dr. A. Sharma", available: true },
+      { name: "Dr. B. Verma", available: false },
+      { name: "Dr. C. Mehta", available: true },
+      { name: "Dr. D. Rao", available: true },
+      { name: "Dr. E. Joshi", available: false },
+      { name: "Dr. F. Iyer", available: true },
+      { name: "Dr. G. Singh", available: true },
+      { name: "Dr. H. Roy", available: false },
+      { name: "Dr. I. Khan", available: true },
+      { name: "Dr. J. Das", available: true },
+    ];
+
+    const table = document.getElementById("doctor-table");
+
+    doctors.forEach((doc, index) => {
+      const row = document.createElement("tr");
+      row.className = index % 2 === 0 ? "bg-white" : "bg-gray-50";
+      row.innerHTML = `
+        <td class="px-4 py-2">${doc.name}</td>
+        <td class="px-4 py-2">${doc.available ? "Available" : "Not Available"}</td>
+        <td class="px-4 py-2">
+          <button 
+            class="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-400"
+            ${doc.available ? "" : "disabled"}
+            onclick="bookAppointment('${doc.name}')"
+          >
+            Book Appointment
+          </button>
+        </td>
+      `;
+      table.appendChild(row);
+    });
+
+    function bookAppointment(name) {
+      alert("Appointment booked with " + name);
+    }
+  </script>
+</body>
+</html>

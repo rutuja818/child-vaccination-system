@@ -1,0 +1,64 @@
+/* General Styling for the Page */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-img-top {
+    border-bottom: 1px solid #ddd;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    color: #3dc0e4;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #666;
+}
+
+/* Intro Section */
+.intro h2 {
+    font-size: 2.5rem;
+    color: #333;
+}
+
+.intro p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Footer */
+footer p {
+    font-size: 1rem;
+}
+/* Align Cards in a Single Row */
+.card-container { 
+    display: flex;  
+    justify-content: space-between; /* Spaces cards evenly */
+    align-items: stretch; /* Ensures equal height */
+    flex-wrap: wrap; /* Prevents breaking on small screens */
+    gap: 20px; /* Adds spacing between cards */
+}
+
+.card {
+    flex: 1;  
+    max-width: 30%; /* Ensures cards stay in one line */
+    text-align: center;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+}

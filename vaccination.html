@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vaccination Chart (0–16 Months)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f3f3f3;
+    }
+    .completed {
+      background-color: #d4edda;
+    }
+    .pending {
+      background-color: #f8d7da;
+    }
+    .reminder {
+      color: red;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Child Vaccination Chart (0–16 Months)</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Age</th>
+        <th>Vaccine</th>
+        <th>Status</th>
+        <th>Reminder</th>
+        <th>Mark as Done</th>
+      </tr>
+    </thead>
+    <tbody id="vaccineTable">
+      <!-- Populated by JavaScript -->
+    </tbody>
+  </table>
+
+  <script>
+    // Sample vaccinations
+    const vaccinations = [
+      { age: 'At Birth', vaccine: 'BCG, OPV-0, Hepatitis B-1', dueDays: 0 },
+      { age: '6 Weeks', vaccine: 'DTwP-1, IPV-1, Hib-1, Hep B-2, Rotavirus-1, PCV-1', dueDays: 42 },
+      { age: '10 Weeks', vaccine: 'DTwP-2, IPV-2, Hib-2, Rotavirus-2, PCV-2', dueDays: 70 },
+      { age: '14 Weeks', vaccine: 'DTwP-3, IPV-3, Hib-3, Hep B-3, Rotavirus-3, PCV-3', dueDays: 98 },
+      { age: '6 Months', vaccine: 'Influenza-1 (optional)', dueDays: 180 },
+      { age: '9 Months', vaccine: 'MMR-1, Typhoid Conjugate Vaccine', dueDays: 270 },
+      { age: '12 Months', vaccine: 'Hepatitis A-1', dueDays: 365 },
+      { age: '15 Months', vaccine: 'MMR-2, Varicella-1, PCV Booster', dueDays: 456 },
+      { age: '16 Months', vaccine: 'DTwP Booster-1, IPV Booster-1, Hib Booster', dueDays: 486 }
+    ];
+
+    // Ask for notification permission
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
+    // Set child's date of birth (can later fetch from backend)
+    const dob = new Date("2024-10-01"); // Change to actual DOB
+
+    function daysBetween(d1, d2) {
+      return Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
+    }
+
+    function loadVaccines() {
+      const table = document.getElementById('vaccineTable');
+      const savedStatus = JSON.parse(localStorage.getItem('vaccineStatus')) || {};
+      const today = new Date();
+
+      vaccinations.forEach((item, index) => {
+        const dueDate = new Date(dob);
+        dueDate.setDate(dueDate.getDate() + item.dueDays);
+        const daysToDue = daysBetween(today, dueDate);
+
+        const status = savedStatus[index] ? 'Completed' : 'Pending';
+        const statusClass = savedStatus[index] ? 'completed' : 'pending';
+
+        let reminder = '';
+        if (!savedStatus[index] && daysToDue <= 3 && daysToDue >= 0) {
+          reminder = '<span class="reminder">⚠ Due in ' + daysToDue + ' day(s)</span>';
+          sendBrowserNotification(`Reminder: ${item.vaccine} is due in ${daysToDue} day(s)!`);
+        } else if (!savedStatus[index] && daysToDue < 0) {
+          reminder = '<span class="reminder">⚠ Overdue</span>';
+        }
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.age}</td>
+          <td>${item.vaccine}</td>
+          <td class="${statusClass}" id="status-${index}">${status}</td>
+          <td>${reminder}</td>
+          <td><button onclick="markAsDone(${index})">Mark as Done</button></td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    function markAsDone(index) {
+      const savedStatus = JSON.parse(localStorage.getItem('vaccineStatus')) || {};
+      savedStatus[index] = true;
+      localStorage.setItem('vaccineStatus', JSON.stringify(savedStatus));
+
+      const statusCell = document.getElementById(`status-${index}`);
+      statusCell.textContent = 'Completed';
+      statusCell.className = 'completed';
+
+      location.reload(); // reload to remove reminder
+    }
+
+    function sendBrowserNotification(message) {
+      if (Notification.permission === "granted") {
+        new Notification(message);
+      }
+    }
+
+    loadVaccines();
+  </script>
+
+</body>
+</html>
